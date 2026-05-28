@@ -70,7 +70,7 @@ http://localhost:4173
 
 ArcQuest — статический сайт. Подойдет любой static hosting:
 
-- **Vercel:** импортируй GitHub repo с framework preset **Other**. Build command не нужен, output directory должен быть `.`. Добавленный `vercel.json` явно задает эти настройки и перенаправляет page requests на `index.html`.
+- **Vercel:** импортируй GitHub repo с framework preset **Other**. Добавленный `vercel.json` запускает `node scripts/build-static.mjs` и публикует сгенерированную папку `public`.
 - **Netlify:** деплой из GitHub или drag-and-drop папки проекта, publish directory `/`.
 - **GitHub Pages:** запушь repo, затем включи Pages из ветки `main`, root.
 
@@ -79,7 +79,9 @@ ArcQuest — статический сайт. Подойдет любой static
 Если Vercel показывает только `Not found`, проверь две настройки:
 
 1. **Root Directory** должен указывать на папку, где лежит `index.html`.
-2. **Output Directory** должен быть `.`.
+2. **Build Command** должен быть `node scripts/build-static.mjs`.
+3. **Output Directory** должен быть `public`.
+4. В задеплоенном GitHub commit должны быть `index.html`, `src/`, `scripts/build-static.mjs` и `vercel.json`.
 
 ## Важно
 

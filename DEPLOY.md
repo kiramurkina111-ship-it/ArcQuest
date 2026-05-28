@@ -70,7 +70,7 @@ Flow:
 
 ArcQuest is a static site. Use any static host:
 
-- **Vercel:** import the GitHub repo with framework preset **Other**. Use no build command and output directory `.`. The included `vercel.json` sets this explicitly and rewrites page requests to `index.html`.
+- **Vercel:** import the GitHub repo with framework preset **Other**. The included `vercel.json` runs `node scripts/build-static.mjs` and publishes the generated `public` folder.
 - **Netlify:** deploy from GitHub or drag the project folder, publish directory `/`.
 - **GitHub Pages:** push the repo, then enable Pages from the `main` branch root.
 
@@ -79,7 +79,9 @@ Before deploying, make sure `ACHIEVEMENT_CONTRACT_ADDRESS` is set to your Arc Te
 If Vercel shows only `Not found`, check two settings:
 
 1. **Root Directory** must be the folder that contains `index.html`.
-2. **Output Directory** must be `.`.
+2. **Build Command** must be `node scripts/build-static.mjs`.
+3. **Output Directory** must be `public`.
+4. The deployed GitHub commit must include `index.html`, `src/`, `scripts/build-static.mjs`, and `vercel.json`.
 
 ## Notes
 

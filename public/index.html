@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ArcQuest</title>
+    <link rel="icon" type="image/svg+xml" href="./src/assets/arc-icon.svg" />
+    <link rel="stylesheet" href="./src/styles.css" />
+  </head>
+  <body>
+    <main class="home-screen" id="homeScreen">
+      <section class="home-hero" aria-label="ArcQuest home">
+        <div class="protocol-lines" aria-hidden="true">
+          <span class="arc-curve arc-curve-a"></span>
+          <span class="arc-curve arc-curve-b"></span>
+          <span class="rail rail-vertical"></span>
+          <span class="data-streak streak-a"></span>
+          <span class="data-streak streak-b"></span>
+          <span class="data-streak streak-c"></span>
+          <span class="data-streak streak-d"></span>
+          <span class="data-streak streak-e"></span>
+        </div>
+        <nav class="brand-nav" aria-label="ArcQuest resources">
+          <div class="brand-lockup">
+            <img class="nav-arc-logo" src="./src/assets/arc-logo-ondark.svg" alt="Arc" />
+            <span class="brand-divider" aria-hidden="true"></span>
+            <div>
+              <strong>ArcQuest</strong>
+            </div>
+          </div>
+          <button id="homeConnectWallet" class="wallet-pill home-wallet-pill" type="button">Connect wallet</button>
+          <button id="homeBadges" class="wallet-pill home-wallet-pill" type="button">My Badges</button>
+        </nav>
+
+        <div class="hero-copy">
+          <p class="eyebrow">Arc L1 blockchain / USDC-native training</p>
+          <h1>Learn the Economic OS by routing stablecoin flows.</h1>
+          <p>Play short missions about USDC gas, stable fees, finality, FX, agent settlement, and privacy. Complete missions now; mint achievement NFTs later on Arc testnet.</p>
+        </div>
+      </section>
+
+      <section class="level-select" aria-label="Level select">
+        <div class="section-heading">
+          <p class="eyebrow">Mission deck</p>
+          <h2>Choose a level</h2>
+        </div>
+        <div class="level-grid" id="levelGrid"></div>
+      </section>
+
+      <section class="resource-panel" aria-label="Arc resources">
+        <div>
+          <p class="eyebrow">Resources</p>
+          <h2>Build context while you play.</h2>
+          <p>Fan-made learning game. Not official, not affiliated with Circle or Arc.</p>
+          <p class="creator-credit">
+            <span>Built by Kira</span>
+            <a href="https://x.com/Kiiiiira777" target="_blank" rel="noreferrer">X: Kiiiiira777</a>
+            <span>Discord: kiira7094</span>
+          </p>
+        </div>
+        <div class="resource-links">
+          <a href="https://www.arc.io/" target="_blank" rel="noreferrer">Arc website</a>
+          <a href="https://docs.arc.io/arc-chain" target="_blank" rel="noreferrer">Docs</a>
+          <a href="https://x.com/arc" target="_blank" rel="noreferrer">Arc X</a>
+          <a href="https://faucet.circle.com/" target="_blank" rel="noreferrer">Faucet</a>
+          <a href="https://testnet.arcscan.app/" target="_blank" rel="noreferrer">Explorer</a>
+        </div>
+      </section>
+    </main>
+
+    <main class="shell hidden" id="gameScreen">
+      <section class="game-panel" aria-label="ArcQuest game">
+        <div class="topbar">
+          <div>
+            <p class="eyebrow">ArcQuest / Mission 01</p>
+            <h1>Pay the Grid</h1>
+          </div>
+          <div class="topbar-actions">
+            <button id="backToMenu" class="icon-button" type="button" aria-label="Back to mission select">Missions</button>
+            <button id="levelBadges" class="icon-button" type="button">My Badges</button>
+            <button id="connectWallet" class="wallet-pill" type="button">Connect wallet</button>
+          </div>
+        </div>
+
+        <div class="stage-wrap">
+          <div class="mission-strip" aria-label="Mission hint">
+            <span id="missionHint">Click a glowing node, avoid fake claims</span>
+            <strong id="missionObjective">Route 5 shifting payments</strong>
+          </div>
+          <canvas id="game" width="960" height="540" aria-label="Payment routing map"></canvas>
+          <noscript>
+            <div class="toast">JavaScript is required to play ArcQuest.</div>
+          </noscript>
+          <div class="toast" id="toast">Choose a route for the USDC packet.</div>
+        </div>
+      </section>
+
+      <aside class="hud" aria-label="Mission status">
+        <div class="metric-grid">
+          <div class="metric">
+            <span>Delivered</span>
+            <strong id="delivered">0/5</strong>
+          </div>
+          <div class="metric metric-score">
+            <span>Score</span>
+            <strong id="score">0</strong>
+          </div>
+          <div class="metric metric-fees">
+            <span>Fees</span>
+            <strong id="fees">$0.00</strong>
+          </div>
+          <div class="metric metric-clock">
+            <span>Clock</span>
+            <strong id="clock">60s</strong>
+          </div>
+        </div>
+
+        <section class="brief">
+          <h2>Goal</h2>
+          <p id="goalCopy">Deliver five USDC payments before the timer runs out. Faster completion and lower total fees mean a higher score.</p>
+        </section>
+
+        <section class="brief">
+          <h2>Arc concept</h2>
+          <p id="lesson">Arc uses USDC for gas, so payment apps can reason about fees in dollars instead of volatile native tokens.</p>
+        </section>
+
+        <div class="controls">
+          <button id="restart" type="button">Restart</button>
+          <button id="mint" type="button" disabled>Mint Badge</button>
+        </div>
+      </aside>
+
+      <section class="resource-panel game-resource-panel" aria-label="Arc resources and disclaimer">
+        <div>
+          <p class="eyebrow">Resources</p>
+          <h2>Build context while you play.</h2>
+          <p>Fan-made learning game. Not official, not affiliated with Circle or Arc.</p>
+          <p class="creator-credit">
+            <span>Built by Kira</span>
+            <a href="https://x.com/Kiiiiira777" target="_blank" rel="noreferrer">X: Kiiiiira777</a>
+            <span>Discord: kiira7094</span>
+          </p>
+        </div>
+        <div class="resource-links">
+          <a href="https://www.arc.io/" target="_blank" rel="noreferrer">Arc website</a>
+          <a href="https://docs.arc.io/arc-chain" target="_blank" rel="noreferrer">Docs</a>
+          <a href="https://x.com/arc" target="_blank" rel="noreferrer">Arc X</a>
+          <a href="https://faucet.circle.com/" target="_blank" rel="noreferrer">Faucet</a>
+          <a href="https://testnet.arcscan.app/" target="_blank" rel="noreferrer">Explorer</a>
+        </div>
+      </section>
+    </main>
+
+    <dialog id="completeDialog" class="modal">
+      <h2 id="resultTitle">Mission complete</h2>
+      <p id="resultCopy">You delivered the payments and learned why stable, dollar-denominated fees matter for commerce.</p>
+      <div class="result-line">
+        <span>Final score</span>
+        <strong id="finalScore">0</strong>
+      </div>
+      <div class="modal-actions">
+        <button id="playAgain" type="button">Play again</button>
+        <button id="nextStep" type="button">Mint Badge</button>
+      </div>
+    </dialog>
+
+    <dialog id="levelDialog" class="modal level-modal">
+      <p class="eyebrow" id="levelTag">Mission 01</p>
+      <h2 id="levelTitle">Pay the Grid</h2>
+      <p id="levelTech">Learn why Arc uses USDC as gas.</p>
+      <a id="levelReadMore" class="read-more" href="https://docs.arc.io/arc/concepts/stablecoin-native-model" target="_blank" rel="noreferrer">Read more: Arc docs</a>
+      <div class="level-objective">
+        <span>Objective</span>
+        <strong id="levelObjective">Route five USDC payments</strong>
+      </div>
+      <div class="level-mechanics">
+        <span>Scoring</span>
+        <strong id="levelMechanics">Move fast and keep fees low to earn more points.</strong>
+      </div>
+      <div class="modal-actions">
+        <button id="startLevel" type="button">Start level</button>
+        <button id="closeLevel" class="secondary-action" type="button">Back</button>
+      </div>
+    </dialog>
+
+    <dialog id="mintDialog" class="modal level-modal">
+      <p class="eyebrow">Arc testnet NFT</p>
+      <h2>Mint your result</h2>
+      <p>Your achievement NFT image will include the Arc logo, ArcQuest, this level, your score, and your nickname.</p>
+      <label class="field-label" for="nicknameInput">Nickname</label>
+      <input id="nicknameInput" class="nickname-input" type="text" maxlength="24" placeholder="Nickname" />
+      <p class="field-help">Use 2-24 characters: letters, numbers, dot, dash, or underscore.</p>
+      <figure class="badge-preview" aria-label="Achievement badge preview">
+        <div class="badge-preview-card">
+          <img src="./src/assets/arc-logo-ondark.svg" alt="Arc" />
+          <span>ArcQuest Achievement</span>
+          <em id="badgePreviewMission">Mission 01</em>
+          <strong id="badgePreviewLevel">Pay the Grid</strong>
+          <p>Player: <b id="badgePreviewNickname">Nickname</b></p>
+          <div>
+            <small>Score</small>
+            <b id="badgePreviewScore">0</b>
+          </div>
+        </div>
+        <figcaption>This is the badge image data that will be minted.</figcaption>
+      </figure>
+      <div class="mint-status" id="mintStatus">Connect a wallet on Arc testnet, then mint.</div>
+      <div class="modal-actions">
+        <button id="confirmMint" type="button">Mint Badge</button>
+        <button id="cancelMint" class="secondary-action" type="button">Cancel</button>
+        <button id="nextLevelFromMint" class="next-level-action" type="button">Next level</button>
+      </div>
+    </dialog>
+
+    <dialog id="badgesDialog" class="modal badges-modal">
+      <p class="eyebrow">Arc testnet badges</p>
+      <h2>My Badges</h2>
+      <p id="badgesStatus">Connect a wallet to load your minted ArcQuest badges.</p>
+      <div id="badgesGrid" class="badges-grid"></div>
+      <div class="modal-actions">
+        <button id="refreshBadges" type="button">Refresh</button>
+        <button id="closeBadges" class="secondary-action" type="button">Close</button>
+      </div>
+    </dialog>
+
+    <script defer src="./src/levels/finality-rush.js"></script>
+    <script defer src="./src/main.js"></script>
+  </body>
+</html>
