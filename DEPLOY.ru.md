@@ -70,11 +70,16 @@ http://localhost:4173
 
 ArcQuest — статический сайт. Подойдет любой static hosting:
 
-- **Vercel:** импортируй GitHub repo, build command не нужен, output directory `/`.
+- **Vercel:** импортируй GitHub repo с framework preset **Other**. Build command не нужен, output directory должен быть `.`. Добавленный `vercel.json` явно задает эти настройки и перенаправляет page requests на `index.html`.
 - **Netlify:** деплой из GitHub или drag-and-drop папки проекта, publish directory `/`.
 - **GitHub Pages:** запушь repo, затем включи Pages из ветки `main`, root.
 
 Перед деплоем убедись, что `ACHIEVEMENT_CONTRACT_ADDRESS` заменен на адрес твоего контракта в Arc Testnet.
+
+Если Vercel показывает только `Not found`, проверь две настройки:
+
+1. **Root Directory** должен указывать на папку, где лежит `index.html`.
+2. **Output Directory** должен быть `.`.
 
 ## Важно
 
