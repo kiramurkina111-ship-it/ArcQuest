@@ -8,7 +8,7 @@ See [DEPLOY.md](./DEPLOY.md) for Arc Testnet contract deployment, frontend confi
 
 Mission 01, **Pay the Grid**, is playable without a wallet. Click the next node on the map to route USDC payments to the merchant. Stable routes have predictable fees; unstable routes can spike.
 
-ArcQuest now opens on an Arc-inspired white/blue mission select screen using local official Arc SVG logo assets from the Arc website. Resource links live in the lower panel with a fan-made disclaimer and creator credit: Built by Kira, [X: Kiiiiira777](https://x.com/Kiiiiira777), Discord: `kiira7094`. The same resource/disclaimer panel is also shown below playable levels. Mission 01 is playable; Mission 02 unlocks after Mission 01; Missions 03-06 are shown as locked placeholders for the future learning path.
+ArcQuest now opens on an Arc-inspired white/blue mission select screen using local official Arc SVG logo assets from the Arc website. Resource links live in the lower panel with a fan-made disclaimer and creator credit: Built by Kira, [X: Kiiiiira777](https://x.com/Kiiiiira777), Discord: `kiira7094`. The same resource/disclaimer panel is also shown below playable levels. Missions 01-03 are playable; later missions are shown as locked placeholders for the future learning path.
 
 Each level briefing includes a **Read more** link to the relevant Arc documentation page.
 
@@ -24,7 +24,9 @@ The level screen has been polished with a cleaner simulation surface, Arc-like n
 
 Mission 02, **Finality Rush**, is now available after Mission 01. It teaches deterministic settlement through expiring payments, limited lane capacity, and fee budgeting. Select an invoice, send it through a lane, and finalize at least four payments before two invoices expire while staying inside the $0.09 fee budget. The USDC packet now travels invoice -> lane -> final settlement, reinforcing that sent is not the same as final.
 
-Code organization has started moving toward per-level files. Mission 02 lives in `src/levels/finality-rush.js`, while `src/main.js` now routes reset/update/draw/input to the active mission.
+Mission 03, **StableFX Corridor**, is now available after Mission 02. It now plays as an FX quote-building puzzle instead of another lane picker: the player allocates each request in 25% chunks across multiple corridors, then settles the quote only when the full 100% split fits the recipient's slippage tolerance, fee budget, liquidity depth, and quote window.
+
+Code organization has started moving toward per-level files. Mission 02 lives in `src/levels/finality-rush.js`, Mission 03 lives in `src/levels/stablefx-corridor.js`, and `src/main.js` routes reset/update/draw/input to the active mission.
 
 Onchain layer: after completing a mission, players can enter a nickname and mint an Arc Testnet ERC-721 achievement NFT. The contract generates an onchain SVG image with the Arc logo, ArcQuest, level name, score, and nickname.
 

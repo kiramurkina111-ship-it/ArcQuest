@@ -92,11 +92,11 @@ const levels = [
     id: 3,
     title: "StableFX Corridor",
     concept: "Stablecoin FX and cross-currency routing",
-    tech: "Arc is designed for stablecoin-native FX flows where apps can route value across currencies with predictable costs.",
-    mechanics: "Balance route speed, conversion cost, and corridor risk to keep the final score high.",
-    objective: "Move value across USD, EUR, and CAD routes with the lowest slippage.",
+    tech: "Arc's stablecoin-native model makes FX feel like a payment workflow: route value, control dollar costs, and settle into the right currency.",
+    mechanics: "Build a 100% FX quote by allocating 25% chunks across corridors. Split flow lowers slippage, but every corridor has its own fee, speed, liquidity, and deadline tradeoff.",
+    objective: "Settle four cross-currency quotes before two requests fail while staying under the fee budget.",
     docsUrl: "https://docs.arc.io/arc/concepts/stablecoin-native-model",
-    implemented: false
+    implemented: true
   },
   {
     id: 4,
@@ -191,6 +191,21 @@ const finalityRush = window.ArcQuestLevels.createFinalityRush({
   finishGame
 });
 
+const stableFxCorridor = window.ArcQuestLevels.createStableFxCorridor({
+  state,
+  ui,
+  canvas,
+  ctx,
+  burst,
+  updateParticles,
+  pointerPosition,
+  lerp,
+  easeInOut,
+  roundRect,
+  drawUsdcMark,
+  finishGame
+});
+
 function resetGame() {
   state.screen = "game";
   state.finished = false;
@@ -212,6 +227,8 @@ function resetGame() {
 
   if (state.selectedLevelId === 2) {
     finalityRush.reset();
+  } else if (state.selectedLevelId === 3) {
+    stableFxCorridor.reset();
   } else {
     resetPayTheGrid();
   }
@@ -300,6 +317,10 @@ function startSelectedLevel() {
     ui.missionHint.textContent = "Select an invoice, send it through a lane, then wait for final settlement";
     ui.missionObjective.textContent = "Sent ≠ Final";
     ui.goalCopy.textContent = "Finalize at least four payments before two invoices expire, while staying under the $0.09 fee budget. A payment only counts after it reaches final settlement.";
+  } else if (state.selectedLevelId === 3) {
+    ui.missionHint.textContent = "Build a 100% FX split, then settle before the quote window closes";
+    ui.missionObjective.textContent = "Settle 4 FX quotes";
+    ui.goalCopy.textContent = "Allocate each FX request across corridors in 25% chunks. Keep slippage inside tolerance, fees under $0.16, and settle before the quote window closes.";
   } else {
     ui.missionHint.textContent = "Click a glowing node, avoid fake claims";
     ui.missionObjective.textContent = "Route 5 shifting payments";
@@ -981,15 +1002,23 @@ function finishGame(won, reason = "timeout") {
   }
   ui.resultTitle.textContent = won ? "Mission complete" : "Mission failed";
   ui.resultCopy.textContent = won
-    ? state.selectedLevelId === 2
+    ? state.selectedLevelId === 3
+      ? "You settled the FX corridor and learned how stablecoin payments depend on fee clarity, liquidity, slippage tolerance, and timely settlement."
+      : state.selectedLevelId === 2
       ? "You finalized the payment queue and learned why deterministic settlement matters for time-sensitive commerce."
       : "You delivered the payments and learned why stable, dollar-denominated fees matter for commerce."
     : reason === "scam"
       ? "The packet was sent into a fake claim route. In stablecoin apps, a zero-fee shortcut can be a trap."
+      : reason === "slippage"
+        ? "Too many FX quotes failed because slippage exceeded the recipient tolerance. Try mixing corridors instead of draining one route."
       : reason === "expired"
-        ? "Too many payments expired before settlement. Try prioritizing urgent invoices and faster finality lanes."
+        ? state.selectedLevelId === 3
+          ? "Too many FX payments expired before settlement. Try prioritizing urgent corridors earlier."
+          : "Too many payments expired before settlement. Try prioritizing urgent invoices and faster finality lanes."
         : state.selectedLevelId === 2
           ? "The settlement window closed before enough invoices finalized. Try using faster lanes for urgent payments."
+          : state.selectedLevelId === 3
+            ? "The FX window closed before enough payments settled. Watch deadlines, liquidity, and quoted slippage."
           : "The payment window expired before all five USDC packets settled. Try choosing faster or more predictable routes.";
   ui.finalScore.textContent = state.score.toString();
   ui.mint.disabled = !won;
@@ -1002,8 +1031,12 @@ function finishGame(won, reason = "timeout") {
     ? "Mission complete. You can mint your achievement badge."
     : reason === "scam"
       ? "Scam route hit. Restart and avoid fake claims."
+      : reason === "slippage"
+        ? "FX quote failed twice. Restart and balance liquidity with tolerance."
       : reason === "expired"
-        ? "Too many payments expired. Restart and prioritize urgent settlement."
+        ? state.selectedLevelId === 3
+          ? "Too many FX payments expired. Restart and route urgent corridors first."
+          : "Too many payments expired. Restart and prioritize urgent settlement."
       : "Time ran out. Restart and try a more predictable route.";
   syncUi();
   ui.dialog.showModal();
@@ -1021,6 +1054,10 @@ function update(delta) {
 
   if (state.selectedLevelId === 2) {
     finalityRush.update(delta);
+    return;
+  }
+  if (state.selectedLevelId === 3) {
+    stableFxCorridor.update(delta);
     return;
   }
 
@@ -1069,6 +1106,10 @@ function draw() {
   drawBackground();
   if (state.selectedLevelId === 2) {
     finalityRush.draw();
+    return;
+  }
+  if (state.selectedLevelId === 3) {
+    stableFxCorridor.draw();
     return;
   }
   drawEdges();
@@ -1335,12 +1376,18 @@ function nodeIcon(node) {
 }
 
 function syncUi() {
-  const target = state.selectedLevelId === 2 ? finalityRush.targetDeliveries : 5;
+  const target = state.selectedLevelId === 2
+    ? finalityRush.targetDeliveries
+    : state.selectedLevelId === 3
+      ? stableFxCorridor.targetDeliveries
+      : 5;
   ui.delivered.textContent = `${state.delivered}/${target}`;
   ui.score.textContent = Math.round(state.score).toString();
   ui.fees.textContent = state.selectedLevelId === 2
     ? `$${state.totalFees.toFixed(2)}/$${finalityRush.feeBudget.toFixed(2)}`
-    : `$${state.totalFees.toFixed(2)}`;
+    : state.selectedLevelId === 3
+      ? `$${state.totalFees.toFixed(2)}/$${stableFxCorridor.feeBudget.toFixed(2)}`
+      : `$${state.totalFees.toFixed(2)}`;
   ui.clock.textContent = `${Math.ceil(state.timeLeft)}s`;
 }
 
@@ -1382,6 +1429,10 @@ function handleCanvasClick(event) {
     finalityRush.handleClick(event);
     return;
   }
+  if (state.selectedLevelId === 3) {
+    stableFxCorridor.handleClick(event);
+    return;
+  }
 
   const rect = canvas.getBoundingClientRect();
   const scaleX = canvas.width / rect.width;
@@ -1403,6 +1454,10 @@ function handleCanvasClick(event) {
 function handleCanvasMove(event) {
   if (state.selectedLevelId === 2) {
     finalityRush.handleMove(event);
+    return;
+  }
+  if (state.selectedLevelId === 3) {
+    stableFxCorridor.handleMove(event);
     return;
   }
 
